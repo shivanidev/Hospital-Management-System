@@ -1,0 +1,126 @@
+<script type="text/javascript">
+
+    var baes_url = "<?php echo $this->baseUrl(); ?>";
+
+    $(document).ready(function(){
+
+        $("#add-room").button();
+
+        $('.delete').click(function () {
+            $('.mes_row').remove();
+            $('#mes').empty();
+
+            var thisrow = $(this).parents('tr');
+            var id = thisrow.attr('id');
+
+            var mes_row = '<tr class="mes_row"><td colspan="7">'
+                + 'Are you sure you want to delete this Room? &nbsp;'
+                + '<input class="yes" value="Yes" type="button" /> &nbsp'
+                + '<input class="no" value="No" type="button" />'
+                + '</td></tr>';
+
+            $(this).parents('tr').after(mes_row);
+
+            $('.yes').click(function () {             
+
+                $.post(baes_url+'/room/delete/', {id:id}, function(data) {
+                    $('.mes_row').remove();	
+                    if (data) {
+                        thisrow.hide(2500);
+                        var success = '<div class="success"><ul><li>Room deleted successfully</li></ul></div>';
+                        $('#mes').html(success);
+
+                        if ($('.data-table tbody tr').filter(':visible').length == 1) {
+                            $('.data-table').hide(2500);
+                            var empty = '<div class="mart50 jnotice ui-state-highlight ui-corner-all">'
+                                + '<span class="ui-icon ui-icon-info message"></span>Roms not found' 
+                                + '</div>';
+                            $('#mes').after(empty);
+                        }
+                        
+                    } else {
+                        var errors = '<div class="errors">'
+                            + '<ul><li>Room delete unsuccessfully</li></ul></div>';
+                        $('#mes').html(errors);
+                    }                   				
+                });
+            });
+
+            $('.no').click( function () {
+                $('.mes_row').remove();
+            });
+        });   	
+    	
+    });  
+
+</script>   
+
+<div class="w150">
+    <span><a href= "<?php echo $this->url(
+                        array(
+                            'controller' => 'reservations',
+                            'action' => 'index'
+                        ), 'default', true
+                );
+                ?>">Reservation</a></span><span> | </span>
+    <span>Rooms</span>
+</div>
+
+<?php if ($this->isAllowed('room', 'add')) { ?>
+    <span id="add-room" class="floatright marb25">
+        <a href="<?php echo $this->url(
+                    array(
+                        'controller' => 'room',
+                        'action' => 'add'
+                    ), 'default', true
+    );
+    ?>">Add Room</a>
+    </span>
+<?php } ?>
+
+<div class="clear"></div>
+<div id="mes" class="marb25"></div>
+
+<?php if ($this->room_list) { ?>
+
+    <table class="data-table">
+
+        <thead>
+            <tr>
+                <th class="alignleft">Name</th>
+                <th class="textalignright percent10">Quantity</th>
+                <th class="textalignright percent10">Payment</th>			
+                <th class="aligncenter w25"></th>
+                <th class="aligncenter w25"></th>		
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($this->room_list as $room) { ?>
+
+                <tr id="<?php echo $room['id']; ?>">
+                    <td><?php echo $room['name']; ?></td>
+                    <td class="textalignright"><?php echo $room['quantity']; ?></td>
+                    <td class="textalignright"><?php echo $room['payment']; ?></td>			
+                    <td class="aligncenter">
+                        <a title="edit" class="edit aligncenter" href="<?php echo $this->url(
+                            array(
+                                'controller' => 'room',
+                                'action' => 'edit',
+                                'id' => $room['id']
+                            ), 'default', true
+                    );
+                    ?>"></a>
+                    </td>
+                    <td class="aligncenter"><a title="delete" class="delete aligncenter" href="JavaScript:void(0);"></a></td>
+                </tr>		
+            <?php } ?>
+        </tbody>
+    </table>
+
+<?php } else { ?>
+
+    <div class="mart50 jnotice ui-state-highlight ui-corner-all">
+        <span class="ui-icon ui-icon-info message"></span>Rooms not found
+    </div>
+
+<?php } ?>

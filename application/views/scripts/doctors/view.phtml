@@ -1,0 +1,161 @@
+<script type="text/javascript">  
+
+    $(document).ready(function(){
+        $('.jbutton').button();
+    });
+    
+</script>
+
+<?php if ($this->isAllowed('doctors', 'channeling')) { ?>
+<span id="chanaling-doctor" class="jbutton floatright">
+    <a href="<?php echo $this->url(
+                        array(							
+                            'controller' => 'doctors',
+                            'action' => 'channeling',
+                            'id' => $this->doctorId
+                        ),
+                        'default',
+                        true
+    ); ?>">Channeling</a>
+</span>
+<?php } ?>
+
+<?php if ($this->isAllowed('doctors', 'edit')) { ?>
+<span id="edit-doctor" class="jbutton floatright marr5">
+    <a href="<?php echo $this->url(
+                        array(							
+                            'controller' => 'doctors',
+                            'action' => 'edit',
+                            'id' => $this->userId
+                        ),
+                        'default',
+                        true
+    ); ?>">Edit Doctor</a>
+</span>
+<?php } ?>
+
+<div class="clear"></div>
+
+<?php $user = $this->user; ?>
+
+<h1 class="title"><?php echo $user['name']; ?></h1>
+<div class="underling-green"></div>
+<div class="profile">
+       
+    <div class="p-image">
+    	<?php if (isset($user['image']) && !empty($user['image'])) { ?>
+        	<img src="<?php echo $this->baseUrl().'/images/users/'.$user['image']; ?>"/>
+        <?php } else { ?>
+        	<img src="<?php echo $this->baseUrl(); ?>/images/doctor.png"/>
+        <?php } ?>
+    </div>
+    
+    <div class="category">
+        <div class="sub-title">Doctor Details</div>   
+        
+        <table>
+            <tbody>
+                <tr>
+                    <td class="p-title">Degree</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $user['degree']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Specialties</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span>
+                        <?php echo $user['specialties']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Payment</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span>
+                        <?php echo 'SLR '. $user['payment']; ?>
+                    </td>
+                </tr>                
+            </tbody>
+        </table>     
+        <div class="p-title">Description</div>                    
+        <div class="p-body padl40">              
+             <?php echo $user['description']; ?>
+        </div>
+                       
+        <div class="p-title">Canneling</div>                    
+        <div class="p-body padl40">  
+            <table>
+                <tbody>
+                <?php
+                
+                    $trows = '';
+                
+                    foreach ($user['doctor_time'] as $value) {                        
+                        $trows .= '<tr>';
+                        $trows .= '<td class="w100">'. ucfirst($value['day']) .'</td>';
+                        $trows .= '<td>'. substr($value['from_time'], 0, 5) .'</td>';
+                        $trows .= '<td> - '. substr($value['to_time'], 0, 5) .'</td>';
+                        $trows .= '</tr>';
+                    }                
+                    
+                    echo $trows;
+                ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+   
+    <?php 
+        if (Zend_Auth::getInstance()->hasIdentity()) {        
+            $userId = Zend_Auth::getInstance()->getStorage()->read()->id;
+        } else {
+            $userId = null;
+        }
+        
+        $role = Zend_Registry::get('role');  
+    
+        if ($role == 'admin' || ($role == 'doctor' && $userId == $this->doctorId)) {
+    ?>
+    
+    <div class="category mart50">
+        <div class="sub-title">Personal Details</div>   
+        
+        <table>
+            <tbody>
+                <tr>
+                    <td class="p-title">Email</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $user['email']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Birth Day</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span>
+                        <?php echo $user['bday']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Telephone</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span>
+                        <?php echo $user['telno']; ?>
+                    </td>
+                </tr>  
+                <tr>
+                    <td class="p-title">Address</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span>
+                        <?php echo $user['address']; ?>                       
+                    </td>
+                </tr>  
+            </tbody>
+        </table>       
+        
+    </div>
+    <?php } ?>
+    
+</div>
+<div class="clear"></div>

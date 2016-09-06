@@ -1,0 +1,46 @@
+<script type="text/javascript">
+
+    var baseUrl = "<?php echo $this->baseUrl(); ?>";
+
+    $(document).ready(function(){
+
+        $('#add-room').button();
+
+        $('input[name=reservation]:radio').change(function(){
+            document.location.href = baseUrl+'/reservations/addnewuser';
+        });
+    });
+
+</script>
+
+<? if (!$this->room) { ?>
+    <?php if ($this->isAllowed('room', 'add')) { ?>
+        <span id="add-room" class="floatright marb25">
+            <a href="<?php echo $this->url(
+                        array(
+                            'controller' => 'room',
+                            'action' => 'add'
+                        ), 'default', true
+        );
+        ?>">Add Room</a>
+        </span>
+    <?php } ?>
+<?php } ?>
+
+<div class="clear"></div>
+
+<?php $this->displayMessage($this->message); ?>
+
+<?php if ($this->room) { ?>
+
+    <div>
+        <span>Already registered patient ?</span>
+        <input checked="checked" type="radio" name="reservation" value="yes">Yes
+        <input type="radio" name="reservation" value="no">No
+    </div>
+
+    <div id="add-form">
+        <?php echo $this->form; ?>
+    </div>
+
+<?php } ?>

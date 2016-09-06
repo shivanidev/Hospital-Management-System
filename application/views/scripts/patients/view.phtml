@@ -1,0 +1,249 @@
+<script type="text/javascript">
+  
+    $(document).ready(function(){
+        
+        //  $('.jbutton').button();
+           
+        $('#labtest-list').hide();
+        $('#cheking-list').hide();
+        $('#channeling-list').show();
+        $('#channeling').addClass("ui-state-active");
+        
+        $('#channeling').click(function (){
+            $('#channeling-list').show();
+            $('#labtest-list').hide();
+            $('#cheking-list').hide();
+            $('#channeling').addClass("ui-state-active");
+            $('#labtest').removeClass("ui-state-active");
+            $('#cheking').removeClass("ui-state-active");
+        });
+        
+        $('#labtest').click(function (){
+            $('#labtest-list').show();
+            $('#cheking-list').hide();
+            $('#channeling-list').hide();
+            $('#labtest').addClass("ui-state-active");
+            $('#cheking').removeClass("ui-state-active");
+            $('#channeling').removeClass("ui-state-active");
+              
+        });
+        
+        $('#cheking').click(function (){
+            $('#cheking-list').show();
+            $('#labtest-list').hide();
+            $('#channeling-list').hide();
+            $('#cheking').addClass("ui-state-active");
+            $('#labtest').removeClass("ui-state-active");
+            $('#channeling').removeClass("ui-state-active");
+        });
+    });
+
+    
+</script>
+
+
+<div class="clear"></div>
+
+<?php
+$user = $this->user;
+//print_r($this->channelList);
+//echo $this->patientId;
+?>
+
+<h1 class="title"><?php echo $user['name']; ?></h1>
+<div class="underling-green"></div>
+<div class="profile">
+
+    <div class="p-image">
+        <?php if (isset($user['image']) && !empty($user['image']) && $user['image'] != 'doctor') { ?>
+            <img src="<?php echo $this->baseUrl() . '/images/users/' . $user['image']; ?>"/>
+        <?php } else if (isset($user['image']) && $user['image'] == 'doctor') { ?>
+            <img src="<?php echo $this->baseUrl(); ?>/images/doctor.png"/>
+        <?php } else { ?>
+            <img src="<?php echo $this->baseUrl(); ?>/images/user.png"/>
+        <?php } ?>
+    </div>
+
+    <div class="category">
+        <div class="sub-title">Personal Details</div>   
+
+        <table>
+            <tbody>
+                <tr>
+                    <td class="p-title">Email</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $user['email']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Birth Day</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span>
+                        <?php echo $user['bday']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Telephone</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span>
+                        <?php echo $user['tel_no']; ?>
+                    </td>
+                </tr>  
+                <tr>
+                    <td class="p-title">Address</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span>
+                        <?php echo $user['address']; ?>                       
+                    </td>
+                </tr>  
+            </tbody>
+        </table> 
+    </div>
+
+    <div class="link-set">
+        <button id="channeling" class="fg-button ui-state-default  ui-corner-left">Channeling</button> 
+        <button id="labtest" class="fg-button ui-state-default  ">Lab Test</button> 
+        <button id="cheking" class="fg-button ui-state-default  ui-corner-right">Checking</button> 
+    </div>
+
+    <div id="tables" class="clear pad10">
+        <?php if ($this->channelList) { ?>
+            <div id="channeling-list">
+                <div class="sub-title">Channeling Doctors List</div>
+                <br></br>
+                <table class="data-table wid90" >
+                    <thead>
+                        <tr>
+                            <th class="alignleft">Doctor Name</th>                           
+                            <th class="w100 alignleft">Channel Date</th>
+                            <th class="w25"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $trows = '';
+
+                        foreach ($this->channelList as $chanel) {
+
+                            $trows .= '<tr>';
+                            $trows .= '<td>' . $chanel["first_name"] . ' ' . $chanel["last_name"] . '</td>';                           
+                            $trows .= '<td>' . $chanel["channel_date"] . '</td>';
+
+                            if ($chanel['userId'] == $this->currentUserId) {
+                                $trows .= '<td class="aligncenter">'
+                                        . '<a class="checking" title="Checking Note" href="'
+                                        . $this->url(
+                                                array(
+                                                    'controller' => 'patients',
+                                                    'action' => 'checking',
+                                                    'id' => $chanel['id']
+                                                ), 'default', true
+                                        ) . '"></a></td>';
+                            } else {
+                                $trows .= '<td class="aligncenter"></td>';
+                            }
+                            
+                            $trows .= '</tr>'; 
+                        }
+
+                        echo $trows;
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php } ?>
+        <?php if ($this->labTestList) { ?>
+            <div id="labtest-list">
+                <div class="sub-title">Lab List</div>
+                <br></br>
+                <table class="data-table wid90">
+                    <thead>
+                        <tr>
+                            <th class="alignleft">Lab Test Name</th>                          
+                            <th class="w100 alignleft">Booking Date</th>
+                            <th class="w25"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $trows = '';
+
+                        foreach ($this->labTestList as $labTest) {                           
+                            $trows .= '<tr>';
+                            $trows .= '<td>' . $labTest["name"] . '</td>';
+                            $trows .= '<td>' . $labTest["date"] . '</td>';
+                            
+                            if ($this->currentUserRole == 3) {
+                                $trows .= '<td class="aligncenter">'
+                                        . '<a class="checking" title="Checking Note" href="'
+                                        . $this->url(
+                                                array(
+                                                    'controller' => 'patients',
+                                                    'action' => 'checking',
+                                                    'id' => $this->$labTest['id']
+                                                ), 'default', true
+                                        ) . '"></a></td>';
+                            } else {
+                                $trows .= '<td class="aligncenter"></td>';
+                            }
+                            
+                            $trows .= '</tr>';                          
+                        }
+
+                        echo $trows;
+                        ?>
+                    </tbody>
+                </table>
+
+            </div>
+        <?php } ?>
+        <?php if ($this->checkingList) { ?>
+
+            <div id="cheking-list">
+
+                <div class="sub-title">Checking List</div>
+                <br></br>
+                <table class="data-table wid90">
+                    <thead>
+                        <tr>
+                            <th class="alignleft">Cheking Name</th>                          
+                            <th class="w100 alignleft">Booking Date</th>
+                            <th class="w25"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $trows = '';
+
+                        foreach ($this->checkingList as $checking) {
+
+                            $trows .= '<tr>';
+                            $trows .= '<td>' . $checking["name"] . '</td>';                        
+                            $trows .= '<td>' . $checking["date"] . '</td>';
+                           
+                            if ($this->currentUserRole == 4) {
+                                $trows .= '<td class="aligncenter">'
+                                        . '<a class="checking" title="Checking Note" href="'
+                                        . $this->url(
+                                                array(
+                                                    'controller' => 'patients',
+                                                    'action' => 'checking',
+                                                    'id' => $checking['id']
+                                                ), 'default', true
+                                        ) . '"></a></td>';
+                            } else {
+                                $trows .= '<td class="aligncenter"></td>';
+                            }
+
+                            $trows .= '</tr>';                            
+                        }
+
+                        echo $trows;
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php } ?>
+    </div>
+</div>

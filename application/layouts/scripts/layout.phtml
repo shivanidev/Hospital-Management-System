@@ -1,0 +1,25 @@
+<?php echo $this->doctype(); ?>
+<html>
+    <head>
+        <?php echo $this->headMeta(); ?>  
+        <?php echo $this->headTitle('Test Site'); ?>  
+        <?php echo $this->headLink()->setStylesheet($this->baseUrl() . '/css/styles.css') ?>
+        <?php echo $this->headLink()->setStylesheet($this->baseUrl() . '/css/chat.css') ?>
+        <?php echo $this->headLink()->setStylesheet($this->baseUrl() . '/css/aboutus.css') ?>
+        <?php echo $this->jQuery(); ?>
+
+        <?php $this->headScript()->appendFile($this->baseUrl() . '/js/chat.js') ?> 
+    </head>
+    <body> 
+        <?php echo $this->render('header.phtml'); ?>  
+        <div id="topmenu">
+            <?php echo $this->navigation()->menu(); ?>
+        </div>
+        <div class="clear"></div>	
+        <div id="maincontent">
+            <?php echo $this->layout()->content; ?>  
+            <div class="clear"></div>
+        </div>        
+        <?php echo $this->render('footer.phtml'); ?>
+    </body>
+</html>

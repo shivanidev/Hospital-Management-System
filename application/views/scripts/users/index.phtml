@@ -1,0 +1,188 @@
+<script type="text/javascript">
+    var baseUrl = "<?php echo $this->baseUrl(); ?>";
+
+    $(document).ready(function(){
+        $("#add-user").button();
+
+        $('.delete').click(function () {
+            $('.mes_row').remove();
+            $('#mes').empty();
+
+            var thisrow = $(this).parents('tr');
+            var id = thisrow.attr('id');
+
+            var mes_row = '<tr class="mes_row"><td colspan="6">'
+                + 'Are you sure you want to delete this user? &nbsp;'
+                + '<input class="yes" value="Yes" type="button" /> &nbsp'
+                + '<input class="no" value="No" type="button" />'
+                + '</td></tr>';
+
+            $(this).parents('tr').after(mes_row);
+
+            $('.yes').click(function () {
+
+                var path = baseUrl+'/users/delete/';
+
+                $.post(path, {id:id}, function(data) {
+                    $('.mes_row').remove();	
+                    if (data) {
+                        thisrow.hide(2500);
+                        var success = '<ul class="success"><li>User delete successfully</li></ul>';
+                        $('#mes').html(success);
+                        
+                        if ($('.data-table tbody tr').length == 1) {
+                            $('.data-table').hide(2500);
+                            var empty = '<div class="mart50 jnotice ui-state-highlight ui-corner-all">'
+                                + '<span class="ui-icon ui-icon-info message"></span>users not found' 
+                                + '</div>';
+                            $('#add-user').after(empty)
+                        }
+                        
+                    } else {
+                        var errors = '<div class="errors">'
+                            + '<ul><li>User delete unsuccessfully</li></ul></div>';
+                        $('#mes').html(errors);
+                    }                   				
+                });
+            });
+
+            $('.no').click( function () {
+                $('.mes_row').remove();
+            });
+        });
+    });
+</script>
+
+<div id="mes" class="floatleft wid90"></div>
+<?php if ($this->isAllowed('users', 'add')) { ?>
+    <span id="add-user" class="floatright marb25">
+        <a href="<?php echo $this->url(
+                            array(							
+                                'controller' => 'users',
+                                'action' => 'add'
+                            ),
+                            'default',
+                            true
+        ); ?>">Add user</a>
+    </span>
+<?php } ?>
+
+<?php if ($this->users) { ?>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th class="alignleft">Name</th>
+            <th class="alignleft">Role</th>
+            <th class="w35"></th>
+            <?php if ($this->isAllowed('users', 'changepassword')) { ?>
+                <th class="w35"></th>
+            <?php } ?>
+            <?php if ($this->isAllowed('users', 'edit')) { ?>
+                <th class="w25"></th>
+            <?php } ?>     
+            <?php if ($this->isAllowed('users', 'delete')) { ?>
+                <th class="w25"></th>
+            <?php } ?>
+        </tr>
+    </thead>
+    <tbody>
+        <?php 
+        
+            $currentUserId = Zend_Auth::getInstance()->getStorage()->read()->id;
+                      
+            $role = Zend_Registry::get('role');
+            
+            $trows = '';
+            
+            foreach ($this->users as $userId => $user) {
+                
+                if ($user['role'] == 'doctor') {
+                    $controller = 'doctors';
+                } else {
+                    $controller = 'users';
+                }  
+                
+                $trows .= '<tr id="'. $userId .'">';
+               
+                $trows .= '<td><a class="table-link" href="' . $this->url( 
+                        array(							
+                            'controller' => 'users',
+                            'action' => 'view',
+                            'id' => $userId
+                        ),
+                        'default',
+                        true
+                     ) .'">'. $user['name'] .'</a></td>';
+                
+                $trows .= '<td>'. $user['role'] .'</td>';
+                
+                $trows .= '<td class="aligncenter">'
+                    . '<a class="user-info" title="View user Information" href="'
+                    . $this->url( 
+                        array(							
+                            'controller' => $controller,
+                            'action' => 'view',
+                            'id' => $userId                            
+                        ),
+                        'default',
+                        true
+                     ) .'"></a></td>';
+                
+                if (
+                    $role == 'admin'
+                    || ($this->isAllowed('users', 'changepassword') && $userId == $currentUserId)                     
+                ) {
+                    $trows .= '<td class="aligncenter">'
+                        . '<a class="unlock" title="Update Login Details" href="'
+                        . $this->url( 
+                            array(							
+                                'controller' => 'users',
+                                'action' => 'changepassword',
+                                'id' => $userId
+                            ),
+                            'default',
+                            true
+                        ) .'"></a></td>';
+                } else if ($this->isAllowed('users', 'changepassword')) {
+                    $trows .= '<td></td>';
+                }
+                
+                if (
+                    $role == 'admin'
+                    || ($this->isAllowed('users', 'edit') && $userId == $currentUserId)                     
+                ) {
+                    $trows .= '<td class="aligncenter">'
+                        . '<a class="edit" title="Edit user Details" href="'
+                        . $this->url( 
+                            array(							
+                                'controller' => $controller,
+                                'action' => 'edit',
+                                'id' => $userId,
+                                'role' => $user['role_id']
+                            ),
+                            'default',
+                            true
+                        ) .'"></a></td>';
+                } else if ($this->isAllowed('users', 'edit')) {
+                    $trows .= '<td></td>';
+                }
+                
+                if ($this->isAllowed('users', 'delete')) {
+                    $trows .= '<td class="aligncenter">'
+                        .'<a class="delete" title="Delete user" href="javascript:void(0);"/></td>';
+                }
+                
+                $trows .= '</tr>';
+            }
+            
+            echo $trows;
+        ?>
+    </tbody>
+</table>
+
+<?php } else { ?>
+    <div class="mart50 jnotice ui-state-highlight ui-corner-all">
+        <span class="ui-icon ui-icon-info message"></span>Users not found 
+    </div>
+<?php } ?>

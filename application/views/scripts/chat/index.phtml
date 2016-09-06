@@ -1,0 +1,61 @@
+<script type="text/javascript" src="js/chat.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        var baseUrl="<?php echo $this->baseUrl(); ?>";
+        initChat(baseUrl);
+
+    });
+
+</script>
+
+<div id="view-content">
+
+    <div id="main_container">
+
+        <?php if ($this->users) { ?>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="alignleft">Name</th>
+                        <th class="alignleft">Role</th>
+                        <th class="w35"  ></th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $trows = '';
+                    foreach ($this->users as $user) {
+                        $trows .= '<tr id="' . $user['id'] . '">';
+                        $trows .= '<td>' . $user['title'] . ' ' . $user['initials'] . ' '
+                                . $user['first_name'] . ' ' . $user['last_name'] . '</td>';
+                        $trows .= '<td>' . ucfirst($user['role']) . '</td>';
+                        $trows .= "<td class=\"aligncenter\">
+                                            <a class=\"chat\" title=\"chat\" href=\"javascript:void(0)\" 
+                                            onclick=\"chatWith('{$user['first_name']}{$user['last_name']}')\"></a></td>";
+                        $trows .= '</tr>';
+                    }
+                    echo $trows;
+                    ?>
+                </tbody>
+            </table>
+
+        <?php } else { ?>
+            <div class="mart50 jnotice ui-state-highlight ui-corner-all">
+                <span class="ui-icon ui-icon-info message"></span>Users not found 
+            </div>
+        <?php } ?>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+

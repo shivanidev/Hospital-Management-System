@@ -1,0 +1,147 @@
+<script type="text/javascript">
+    var baseUrl = "<?php echo $this->baseUrl(); ?>";
+
+    $(document).ready(function(){
+        $("#add-labtest").button();
+        
+        $('.delete').click(function () {
+            $('.mes_row').remove();
+            $('#mes').empty();
+
+            var thisrow = $(this).parents('tr');
+            var id = thisrow.attr('id');
+
+            var mes_row = '<tr class="mes_row"><td colspan="5">'
+                + 'Are you sure you want to delete this labtest? &nbsp;'
+                + '<input class="yes" value="Yes" type="button" /> &nbsp'
+                + '<input class="no" value="No" type="button" />'
+                + '</td></tr>';
+            $(this).parents('tr').after(mes_row);
+            
+            $('.yes').click(function () {
+
+                var path = baseUrl+'/labtest/delete/';
+
+                $.post(path, {id:id}, function(data) {
+                    $('.mes_row').remove();	
+                    if (data.search( "DELETECODE1" )!=-1) {    
+                                            
+                        thisrow.hide(2500);
+                        var success = '<div class="success">'
+                            + '<ul><li>Labtest delete successfully</li></ul></div>';
+                        $('#mes').html(success);                      
+                        if ($('.data-table tbody tr').length == 1) {
+                            $('.data-table').hide(2500);
+                            var empty = '<div class="mart50 jnotice ui-state-highlight ui-corner-all">'
+                                + '<span class="ui-icon ui-icon-info message"></span>Lab Tests not found' 
+                                + '</div>';
+                            $('#add-labtest').after(empty)
+                        }
+                        
+                    }                   
+                    else {
+                        var errors = '<div class="errors">'
+                            + '<ul><li>Labtest delete unsuccessfully</li></ul></div>';
+                        $('#mes').html(errors);
+                       
+                    }                   				
+                });
+            });
+
+            $('.no').click( function () {
+                $('.mes_row').remove();
+            });
+        });
+    });
+</script>  
+
+<div id="mes" class="floatleft wid90"></div>
+<?php if ($this->isAllowed('labtest', 'add')) { ?>
+    <span id="add-labtest" class="floatright marb25">
+        <a href="<?php
+            echo $this->url(
+                    array(
+                        'controller' => 'labtest',
+                        'action' => 'add'
+                    ), 'default', true
+            );
+            ?>">Add  Lab Test</a>
+    </span>
+<?php } ?>
+
+<?php if ($this->labtests) { ?>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th class="alignleft">Name</th>
+                <th class="w35"></th>
+                <th class="w35"></th>                
+                <?php if ($this->isAllowed('labtest', 'edit')) { ?>
+                    <th class="w35"></th>
+                <?php } ?>
+                <?php if ($this->isAllowed('labtest', 'delete')) { ?>
+                    <th class="w25"></th>
+                <?php } ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $labtestsarray = $this->labtests;
+            $trows = '';
+
+            foreach ($labtestsarray as $labtest) {
+                $trows .= '<tr id="' . $labtest['id'] . '">';
+                $trows .= '<td >' . $labtest['name'] . '</td>';               
+                $trows .= '<td class="aligncenter">'
+                        . '<a class="checking-view" title="View Labtest Details" href="'
+                        . $this->url(
+                                array(
+                            'controller' => 'labtest',
+                            'action' => 'view',
+                            'id' => $labtest['id']
+                                ), 'default', true
+                        ) . '"></a></td>';
+
+                $trows .= '<td class="aligncenter">'
+                        . '<a class="changeling" title="Book Labtest" href="'
+                        . $this->url(
+                                array(
+                            'controller' => 'labtest',
+                            'action' => 'book',
+                            'id' => $labtest['id']
+                                ), 'default', true
+                        ) . '"/></td>';
+                
+                if ($this->isAllowed('labtest', 'edit')) {
+                    $trows .= '<td class="aligncenter">'
+                            . '<a class="edit" title="Edit Labtest Details" href="'
+                            . $this->url(
+                                    array(
+                                'controller' => 'labtest',
+                                'action' => 'edit',
+                                'id' => $labtest['id']
+                                    ), 'default', true
+                            ) . '"></a></td>';
+                }
+                
+                if ($this->isAllowed('labtest', 'delete')) {
+                    $trows .= '<td class="aligncenter">'
+                            . '<a class="delete" title="Delete Labtest" href="javascript:void(0);"/></td>';
+                }
+                
+                $trows .= '</tr>';
+            }
+
+            echo $trows;
+            ?>
+
+        </tbody>
+    </table>
+
+
+<?php } else { ?>
+    <div class="mart50 jnotice ui-state-highlight ui-corner-all">
+        <span class="ui-icon ui-icon-info message"></span>Lab Tests not found
+    </div>
+<?php } ?>
+

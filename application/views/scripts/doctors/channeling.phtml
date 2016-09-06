@@ -1,0 +1,60 @@
+<script type="text/javascript">  
+
+    var dates = <?php echo $this->dates; ?>;
+
+    $(document).ready(function(){
+        $("#date").datepicker({
+            beforeShowDay: function (date) {
+
+                var a = dates[0];
+                var b = dates[1];
+                var c = dates[2];
+                var d = dates[3];
+                var e = dates[4];
+                var f = dates[5];
+                var g = dates[6];
+
+                var day = date.getDay();
+
+                return [(day == a || day == b || day == c || day == d || day == e || day == f || day == g  ), ''];
+            },
+            minDate:new Date(),
+            dateFormat: 'yy-mm-dd'
+        });
+
+    });
+	
+</script>
+
+<h1 class="title"><?php echo $this->doctor; ?></h1>
+<div class="underling-green"></div>
+
+ <div class="p-title">Canneling</div>                    
+ <div class="p-body padl40">  
+     <table>
+         <tbody>
+             <?php
+             $trows = '';
+
+             foreach ($this->doctorTime as $value) {
+                 $trows .= '<tr>';
+                 $trows .= '<td class="w100">' . ucfirst($value['day']) . '</td>';
+                 $trows .= '<td>' . substr($value['from_time'], 0, 5) . '</td>';
+                 $trows .= '<td> - ' . substr($value['to_time'], 0, 5) . '</td>';
+                 $trows .= '</tr>';
+             }
+
+             echo $trows;
+             ?>
+         </tbody>
+     </table>
+ </div>
+ 
+<div class="p-title">Payment</div> 
+<div class="p-body padl40">   
+    <?php echo 'SLR '. $this->payment; ?>
+</div>
+
+<div class="mart25">
+    <?php echo $this->form; ?>
+</div>

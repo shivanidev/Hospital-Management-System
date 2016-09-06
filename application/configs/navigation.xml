@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <nav>
+        <index>
+            <label>Home</label>
+            <controller>index</controller>
+            <action>index</action>
+            <resource>index</resource>
+        </index>
+        <doctors>
+            <label>Doctors</label>
+            <controller>doctors</controller>
+            <action>index</action>            
+            <resource>doctors</resource>
+            <privilege>index</privilege>
+        </doctors>
+        <labtest>
+            <label>Lab Test</label>
+            <controller>labtest</controller>
+            <action>index</action>
+            <resource>labtest</resource>
+            <privilege>index</privilege>
+        </labtest>
+        <cheking>
+            <label>Checkup</label>
+            <controller>checking</controller>
+            <action>index</action>
+            <resource>checking</resource>
+            <privilege>index</privilege>
+        </cheking>
+        <reservations>
+            <label>Reservations</label>
+            <controller>reservations</controller>
+            <action>index</action>
+            <resource>reservations</resource>
+            <privilege>index</privilege>
+        </reservations>
+        <patients>
+            <label>Patients</label>
+            <controller>patients</controller>
+            <action>index</action>
+            <resource>patients</resource>
+            <privilege>index</privilege>
+        </patients>
+        <users>
+            <label>Users</label>
+            <controller>users</controller>
+            <action>index</action>
+            <resource>users</resource>
+            <privilege>index</privilege>
+        </users>
+        <chat>
+            <label>Chat</label>
+            <controller>chat</controller>
+            <action>index</action>
+            <resource>chat</resource>
+            <privilege>index</privilege>
+        </chat>
+        <about>
+            <label>About Us</label>
+            <controller>about</controller>
+            <action>index</action>
+            <resource>about</resource>
+        </about>
+    </nav>
+</config>

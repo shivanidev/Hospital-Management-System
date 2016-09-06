@@ -1,0 +1,40 @@
+<script type="text/javascript">
+   
+    $(document).ready(function(){
+
+        $('form').submit(function () { 
+
+            var error = false;
+
+            var i = 0;
+            $('#days input:checkbox:checked').each(function() {
+                var from = $(this).parents('tr').find('.from option:selected').val();
+                var to = $(this).parents('tr').find('.to option:selected').val();
+
+                 if (from == '0.00.00' || to == '0.00.00' || parseFloat(from) >= parseFloat(to)) {
+                    error = true;
+                }
+
+                i++;
+            });
+
+            if (i == 0) {
+                error = true;
+            }
+				        
+            if (error) {
+                $('#message').html('<ul class="errors"><li>Daily Details is not correct.</li></ul>');
+                $('html, body').animate({scrollTop:0}, 1000);
+                return false;
+            }
+        });
+    });
+
+</script>
+
+<div id="message">
+    <?php $this->displayMessage($this->message); ?>
+    <?php $this->displayMessages($this->errors); ?>    
+</div>
+
+<?php echo $this->form; ?>

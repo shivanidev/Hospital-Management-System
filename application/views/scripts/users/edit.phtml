@@ -1,0 +1,38 @@
+<script type="text/javascript">
+   
+    $(document).ready(function(){
+        $('.jbutton').button();
+        $("#bday").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });        
+    }); 
+	
+</script>
+
+<span id="view-doctor" class="jbutton floatright">
+    <a href="<?php echo $this->url(
+                        array(
+                            'controller' => 'users',
+                            'action' => 'view',
+                            'id' => $this->userId
+                        ), 'default', true
+);
+?>">View User</a>
+</span>
+<span id="changepassword-doctor" class="jbutton floatright marr5">
+    <a href="<?php echo $this->url(
+            array(
+                'controller' => 'users',
+                'action' => 'changepassword',
+                'id' => $this->userId
+            ), 'default', true
+    );
+?>">Change Password</a>
+</span>
+<div class="clear"></div>
+
+<div id="message"></div>
+<br/>
+<?php $this->displayMessage($this->message); ?>
+<?php $this->displayMessages($this->errors); ?>
+<?php echo $this->form; ?>

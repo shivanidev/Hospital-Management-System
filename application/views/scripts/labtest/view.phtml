@@ -1,0 +1,95 @@
+<script type="text/javascript">
+   
+    $(document).ready(function(){
+        $('.jbutton').button();
+    });
+    
+</script>
+
+<?php $labtestDetail = $this->labtestDetail; ?>
+
+<?php if ($this->isAllowed('labtest', 'book')) { ?>
+<span id="book-labtest" class="jbutton floatright">
+    <a href="<?php echo $this->url(
+                                array(
+                                    'controller' => 'labtest',
+                                    'action' => 'book',
+                                    'id' => $labtestDetail['id']
+                                ), 'default', true
+                        );
+                        ?>">Book Labtest</a>
+</span>
+<?php } ?>
+
+<?php if ($this->isAllowed('labtest', 'edit')) { ?>
+<span id="edit-labtest" class="jbutton floatright marr5">
+    <a href="<?php echo $this->url(
+                array(
+                    'controller' => 'labtest',
+                    'action' => 'edit',
+                    'id' => $labtestDetail['id']
+                ), 'default', true
+);
+?>">Edit Labtest</a>
+<?php } ?>
+    
+</span>
+
+
+<div class="clear"></div>
+
+<h1 class="title"><?php echo $labtestDetail['name']; ?></h1>
+<div class="underling-green"></div>
+<div class="profile">
+
+    <div class="category">
+        <div class="sub-title">Lab Test Detail</div>   
+
+        <table>
+            <tbody>
+                <tr>
+                    <td class="p-title">Name</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $labtestDetail['name']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Payment</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $labtestDetail['payment']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Description</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $labtestDetail['description']; ?>
+                    </td>
+                </tr>
+        </table>
+
+        <div class="p-title">Available Time </div>   
+        <div class="p-body padl40"> 
+            <table>
+                <tbody>
+
+                <?php foreach ($labtestDetail['weekdays'] as $value) { ?>
+                        <tr >
+                            <td class="w100"><?php echo ucfirst($value['day']); ?></td>
+                            <td><?php echo substr($value['from_time'], 0, 5); ?></td>
+                            <td> - <?php echo substr($value['to_time'], 0, 5); ?></td>
+                        </tr>
+                <?php } ?>
+
+                </tbody> 
+            </table>
+        </div>
+    </div>
+
+
+
+</div>
+
+

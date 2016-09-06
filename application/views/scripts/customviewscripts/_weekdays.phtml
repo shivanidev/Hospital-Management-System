@@ -1,0 +1,70 @@
+<?php
+$timeDetail = $this->times;
+
+function setOptions($selected) {
+
+    $options = '';
+
+    for ($i = 0; $i <= 24; $i++) {
+        $sel = '';
+        if ($i . ':00:00' == $selected || '0' . $i . ':00:00' == $selected) {
+            $sel = 'selected="selected"';
+        }
+
+        if ($i < 10) {
+            $options .= '<option value="' . $i . ':00:00" ' . $sel . '>0' . $i . ':00</option>';
+        } else {
+            $options .= '<option value="' . $i . ':00:00" ' . $sel . '>' . $i . ':00</option>';
+        }
+    }
+    return $options;
+}
+
+$weekday = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+?>
+<table>
+    <tbody id="days">
+        <?php
+        $trow = '';
+        $i = 0;
+        foreach ($weekday as $day) {
+
+            $fromtime = '';
+            $totime = '';
+            $daychecked = '';
+
+            if (isset($timeDetail[$i]['day'])) {
+                if ($timeDetail[$i]['day'] == $day) {
+                    $daychecked = 'checked="checked"';
+                    $fromtime = $timeDetail[$i] ['from_time'];
+                    $totime = $timeDetail[$i] ['to_time'];
+                    $i++;
+                }
+            }
+
+            $trow .= "<tr>"
+                    . "<td class=\"w150\">"
+                    . "<input type=\"checkbox\" id=\"weekdayes-" . $day . "\" name=\"weekdays[" . $day . "][val]\" value=\"1\" " . $daychecked . "/>"
+                    . "<label for=\"weekdays-" . $day . "\">" . ucfirst($day) . "</label>"
+                    . "</td>"
+                    . "<td class=\"w150\">"
+                    . "<label for=\"fromday-" . $day . "\">From Time</label>"
+                    . "<select id=\"fromday-" . $day . "\" class=\"from\" name=\"weekdays[" . $day . "][from]\">"
+                    . setOptions($fromtime)
+                    . "</select>"
+                    . "<td class=\"w150\">"
+                    . "<label for=\"today-" . $day . "\">To Time</label>"
+                    . "<select id=\"today-" . $day . "\" class=\"to\" name=\"weekdays[" . $day . "][to]\">"
+                    . setOptions($totime)
+                    . "</select>"
+                    . "</td>"
+                    . "</tr>";
+        }
+
+        echo $trow;
+        ?>
+
+    </tbody>
+</table>
+
+

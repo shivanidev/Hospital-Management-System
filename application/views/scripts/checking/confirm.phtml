@@ -1,0 +1,54 @@
+<?php $data = $this->data; ?>
+<?php //$this->displayMessage($this->message); ?>
+<?php $this->displayMessages($this->errors); ?>
+
+<?php if($this->message[0]=="success") { ?>
+<h1 class="title">Thank You</h1>
+<div class="underling-green"></div>
+<p>Your online booking is successful.</p>
+<?php } ?>
+
+<div id="channeling-data">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="p-title">Checkup Name</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $data['name']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Checking Date</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $data['date']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Time</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $data['time']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Payment</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo 'SLR '. $data['payment']; ?>
+                    </td>
+                </tr>               
+            </tbody>
+        </table>
+        <div class="p-title">Cancellation Policy</div>                    
+        <div class="p-body padl40">              
+            <p>
+               Cancellation or revision of test orders must be must be made 
+               within 24 hours of receipt of sample. Orders for all tests 
+               scheduled for expedited processing -- including all genetic 
+               pharmacology tests, STAT tests, and prenatal tests -- cannot 
+               be cancelled or revised.
+            </p>
+        </div>
+    </div>    

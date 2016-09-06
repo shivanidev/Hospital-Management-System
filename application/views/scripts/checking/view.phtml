@@ -1,0 +1,92 @@
+<script type="text/javascript">
+    var baseUrl = "<?php echo $this->baseUrl(); ?>";
+
+    $(document).ready(function(){
+        $('.jbutton').button();
+    });
+    
+</script>
+
+<?php $checkingDetail = $this->checkingDetail; ?>
+
+<?php if ($this->isAllowed('checking', 'book')) { ?>
+<span id="book-checking" class="jbutton floatright">
+    <a href="<?php echo $this->url(
+                    array(
+                        'controller' => 'checking',
+                        'action' => 'book',
+                        'id' => $checkingDetail['id']
+                    ), 'default', true
+            );
+        ?>">Book Checkup</a>
+</span>
+<?php } ?>
+
+<?php if ($this->isAllowed('checking', 'edit')) { ?>
+<span id="edit-checking" class="jbutton floatright marr5">
+    <a href="<?php echo $this->url(
+                array(
+                    'controller' => 'checking',
+                    'action' => 'edit',
+                    'id' => $checkingDetail['id']
+                ), 'default', true
+        );
+        ?>">Edit Checkup</a>
+</span>
+<?php } ?>
+
+<div class="clear"></div>
+
+<h1 class="title"><?php echo $checkingDetail['name']; ?></h1>
+<div class="underling-green"></div>
+<div class="profile">
+
+    <div class="category">
+        <div class="sub-title">Checkup Detail</div>   
+
+        <table>
+            <tbody>
+                <tr>
+                    <td class="p-title">Name</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $checkingDetail['name']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Payment</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $checkingDetail['payment']; ?>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="p-title">Description</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $checkingDetail['description']; ?>
+                    </td>
+                </tr>
+
+
+        </table>
+
+        <div class="p-title">Available Time </div>   
+        <div class="p-body padl40"> 
+            <table>
+                <tbody>
+
+                    <?php foreach ($checkingDetail['weekdays'] as $value) { ?>
+                        <tr >
+                            <td class="w100"><?php echo ucfirst($value['day']); ?></td>
+                            <td><?php echo substr($value['from_time'], 0, 5); ?></td>
+                            <td> - <?php echo substr($value['to_time'], 0, 5); ?></td>
+                        </tr>
+                    <?php } ?>
+
+                </tbody> 
+            </table>
+        </div>
+    </div>
+</div>

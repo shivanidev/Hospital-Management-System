@@ -1,0 +1,199 @@
+<script type="text/javascript">
+    
+    $(document).ready(function(){
+        $("#add-doctor").button();
+
+        $('.delete').click(function () {
+            $('.mes_row').remove();
+            $('#mes').empty();
+
+            var thisrow = $(this).parents('tr');
+            var id = thisrow.attr('id');
+
+            var mes_row = '<tr class="mes_row"><td colspan="7">'
+                + 'Are you sure you want to delete this doctor? &nbsp;'
+                + '<input class="yes" value="Yes" type="button" /> &nbsp'
+                + '<input class="no" value="No" type="button" />'
+                + '</td></tr>';
+
+            $(this).parents('tr').after(mes_row);
+
+            $('.yes').click(function () {             
+
+                $.post('/doctors/delete/', {id:id}, function(data) {
+                    $('.mes_row').remove();	
+                    if (data) {
+                        thisrow.hide(2500);
+                        var success = '<div class="success"><ul><li>Doctor delete successfully</li></ul></div>';
+                        $('#mes').html(success);
+                        
+                        if ($('.data-table tbody tr').length == 1) {
+                            $('.data-table').hide(2500);
+                            var empty = '<div class="mart50 jnotice ui-state-highlight ui-corner-all">'
+                                + '<span class="ui-icon ui-icon-info message"></span>Doctors not found' 
+                                + '</div>';
+                            $('#add-doctor').after(empty)
+                        }
+                        
+                    } else {
+                        var errors = '<div class="errors">'
+                            + '<ul><li>Doctor delete unsuccessfully</li></ul></div>';
+                        $('#mes').html(errors);
+                    }                   				
+                });
+            });
+
+            $('.no').click( function () {
+                $('.mes_row').remove();
+            });
+        });
+    });
+</script>
+
+<div id="mes" class="floatleft wid90"></div>
+<?php if ($this->isAllowed('doctors', 'add')) { ?>
+    <span id="add-doctor" class="floatright marb25">
+        <a href="<?php echo $this->url(
+                            array(							
+                                'controller' => 'doctors',
+                                'action' => 'add'
+                            ),
+                            'default',
+                            true
+        ); ?>">Add Doctor</a>
+    </span>
+<?php } ?>
+
+<?php if ($this->doctors) { ?>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th class="alignleft">Name</th>
+            <th class="alignleft">Specialities</th>
+            <th class="w35"></th>
+            <th class="w35"></th>
+            <?php if ($this->isAllowed('doctors', 'changepassword')) { ?>
+            <th class="w35"></th>
+            <?php } ?>
+            <?php if ($this->isAllowed('doctors', 'edit')) { ?>
+                <th class="w35"></th>
+            <?php } ?>
+            <?php if ($this->isAllowed('doctors', 'delete')) { ?>
+                <th class="w25"></th>
+            <?php } ?>
+        </tr>
+    </thead>
+    <tbody>
+        <?php 
+        
+            if (Zend_Auth::getInstance()->hasIdentity()) {        
+                $userId = Zend_Auth::getInstance()->getStorage()->read()->id;
+            } else {
+                $userId = null;
+            }
+            
+            $role = Zend_Registry::get('role');  
+        
+            $trows = '';
+            
+            foreach ($this->doctors as $doctorId => $doctor) {
+                $trows .= '<tr id="'. $doctor['user_id'] .'">';
+               
+                $trows .= '<td><a class="table-link" href="' . $this->url( 
+                        array(							
+                            'controller' => 'doctors',
+                            'action' => 'view',
+                            'id' => $doctorId
+                        ),
+                        'default',
+                        true
+                     ) .'">'. $doctor['name'] .'</a></td>';
+                
+                $trows .= '<td>'. $doctor['specialities'] .'</td>';
+                
+                $trows .= '<td class="aligncenter">'
+                    . '<a class="user-info" title="View Doctor Information" href="'
+                    . $this->url( 
+                        array(							
+                            'controller' => 'doctors',
+                            'action' => 'view',
+                            'id' =>  $doctor['user_id']
+                        ),
+                        'default',
+                        true
+                     ) .'"></a></td>';
+                
+               if ($doctor['user_id'] != $userId) {
+                    $trows .= '<td class="aligncenter">'
+                        . '<a class="changeling" title="Channel The Doctor" href="'
+                        . $this->url( 
+                            array(							
+                                'controller' => 'doctors',
+                                'action' => 'channeling',
+                                'id' =>  $doctor['user_id']
+                            ),
+                            'default',
+                            true
+                         ) .'"></a></td>';
+               } else {
+                   $trows .= '<td></td>';
+               }
+               
+                if (
+                    $role == 'admin' 
+                    || ($role == 'doctor' && $this->isAllowed('doctors', 'changepassword') && $userId == $doctor['user_id']) 
+                    
+                ) {
+                    $trows .= '<td class="aligncenter">'
+                        . '<a class="unlock" title="Update Login Details" href="'
+                        . $this->url( 
+                            array(							
+                                'controller' => 'doctors',
+                                'action' => 'changepassword',
+                                'id' => $doctor['user_id']
+                            ),
+                            'default',
+                            true
+                        ) .'"></a></td>';
+                } else if ($this->isAllowed('doctors', 'changepassword')){
+                    $trows .= '<td></td>';
+                }
+                     
+                if (
+                    $role == 'admin'
+                    || ($role == 'doctor' && $this->isAllowed('doctors', 'edit') && $userId == $doctor['user_id']) 
+                ) {
+                    $trows .= '<td class="aligncenter">'
+                        . '<a class="edit" title="Edit Doctor Details" href="'
+                        . $this->url( 
+                            array(							
+                                'controller' => 'doctors',
+                                'action' => 'edit',
+                                'id' =>  $doctor['user_id']
+                            ),
+                            'default',
+                            true
+                        ) .'"></a></td>';
+                } else if ($this->isAllowed('doctors', 'edit')) {
+                    $trows .= '<td></td>';
+                }
+                
+                if ($this->isAllowed('doctors', 'delete')) {
+                    $trows .= '<td class="aligncenter">'
+                        .'<a class="delete" title="Delete Doctor" href="javascript:void(0);"/></td>';
+                }
+                
+                $trows .= '</tr>';
+            }
+            
+            echo $trows;
+        ?>
+    </tbody>
+</table>
+
+<?php } else { ?>
+    <div class="mart50 jnotice ui-state-highlight ui-corner-all">
+        <span class="ui-icon ui-icon-info message"></span>Doctors not found 
+    </div>
+<?php } ?>

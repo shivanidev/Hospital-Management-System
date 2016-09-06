@@ -1,0 +1,91 @@
+<script type="text/javascript">
+    var baseUrl = "<?php echo $this->baseUrl(); ?>";
+
+    $(document).ready(function(){
+        $('.jbutton').button();
+    });
+    
+</script>
+
+<?php 
+    $controller = 'users';
+    
+    if (Zend_Registry::get('role') == 'doctor') {
+        $controller = 'doctors';
+    }
+?>
+<span id="edit-user" class="jbutton floatright marr5">    
+    <a href="<?php echo $this->url(
+                        array(							
+                            'controller' => $controller,
+                            'action' => 'edit',
+                            'id' => $this->userId                           
+                        ),
+                        'default',
+                        true
+    ); ?>">Edit User</a>
+</span>
+<div class="clear"></div>
+
+<?php $user = $this->user; ?>
+
+<h1 class="title"><?php echo $user['name']; ?></h1>
+<div class="underling-green"></div>
+<div class="profile">
+       
+    <div class="p-image">
+    	<?php if (isset($user['image']) && !empty($user['image']) &&  $user['image'] != 'doctor') { ?>
+        	<img src="<?php echo $this->baseUrl().'/images/users/'.$user['image']; ?>"/>
+        <?php } else if (isset($user['image']) && $user['image'] == 'doctor') { ?>
+        	<img src="<?php echo $this->baseUrl(); ?>/images/doctor.png"/>
+        <?php } else { ?>
+                <img src="<?php echo $this->baseUrl(); ?>/images/user.png"/>
+        <?php } ?>
+    </div>
+    
+     <div class="category">
+        <div class="sub-title">Personal Details</div>   
+        
+        <table>
+            <tbody>
+                <tr>
+                    <td class="p-title">Email</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span> 
+                        <?php echo $user['email']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Birth Day</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span>
+                        <?php echo $user['bday']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-title">Telephone</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span>
+                        <?php echo $user['telno']; ?>
+                    </td>
+                </tr>  
+                <tr>
+                    <td class="p-title">Address</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span>
+                        <?php echo $user['address']; ?>                       
+                    </td>
+                </tr>  
+                <tr>
+                    <td class="p-title">User Type</td>
+                    <td class="p-body">
+                        <span class="p-seperate">:</span>
+                        <?php echo $user['user_type']; ?>                       
+                    </td>
+                </tr>  
+            </tbody>
+        </table>       
+        
+    </div>   
+</div>
+<div class="clear"></div>

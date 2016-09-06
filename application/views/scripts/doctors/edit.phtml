@@ -1,0 +1,68 @@
+<script type="text/javascript">
+   
+    var message1 = 'Daily Details is not correct.';
+   
+    $(document).ready(function(){
+
+        $('.jbutton').button();
+
+    	$('form').submit(function () { 
+
+            var error = false;
+
+            var i = 0;
+            $('#days input:checkbox:checked').each(function() {
+                var from = parseFloat($(this).parents('tr').find('.from option:selected').val());
+                var to = parseFloat($(this).parents('tr').find('.to option:selected').val());
+
+                if (from == '0.00.00' || to == '0.00.00' || parseFloat(from) >= parseFloat(to)) {
+                    error = true;				
+                }
+
+                i++;
+            });
+
+            if (i == 0) {
+                error = true;
+            }
+
+            if (error) {
+                $('#message').html('<ul class="errors"><li>'+ message1 +'</li></ul>');
+                $('html, body').animate({scrollTop:0}, 1000);
+                return false;
+            }
+    	});
+    });
+
+</script>
+
+<span id="view-doctor" class="jbutton floatright">
+    <a href="<?php echo $this->url(
+                        array(							
+                            'controller' => 'doctors',
+                            'action' => 'view',
+                            'id' => $this->userId
+                        ),
+                        'default',
+                        true
+    ); ?>">View Doctor</a>
+</span>
+<span id="changepassword-doctor" class="jbutton floatright marr5">
+    <a href="<?php echo $this->url(
+                        array(							
+                            'controller' => 'doctors',
+                            'action' => 'changepassword',
+                            'id' => $this->userId
+                        ),
+                        'default',
+                        true
+    ); ?>">Change Password</a>
+</span>
+<div class="clear"></div>
+
+<div id="message">
+    <?php $this->displayMessage($this->message); ?>
+    <?php $this->displayMessages($this->errors); ?>
+</div>
+
+<?php echo $this->form; ?>

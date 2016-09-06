@@ -1,0 +1,125 @@
+<script type="text/javascript">
+
+    var baes_url = "<?php echo $this->baseUrl(); ?>";
+
+    $(document).ready(function(){
+
+        $("#add-reservations").button();
+
+        $('.delete').click(function () {
+            $('.mes_row').remove();
+            $('#mes').empty();
+
+            var thisrow = $(this).parents('tr');
+            var id = thisrow.attr('id');
+
+            var mes_row = '<tr class="mes_row"><td colspan="7">'
+                + 'Are you sure you want to delete this Reservation? &nbsp;'
+                + '<input class="yes" value="Yes" type="button" /> &nbsp'
+                + '<input class="no" value="No" type="button" />'
+                + '</td></tr>';
+
+            $(this).parents('tr').after(mes_row);
+
+            $('.yes').click(function () {             
+
+                $.post(baes_url+'/reservations/delete/', {id:id}, function(data) {
+                    $('.mes_row').remove();	
+                    if (data) {
+                        thisrow.hide(2500);
+                        var success = '<ul class="success"><li>Reservation deleted successfully</li></ul>';
+                        $('#mes').html(success);
+
+                        if ($('.data-table tbody tr').filter(':visible').length == 1) {
+                            $('.data-table').hide(2500);
+                            var empty = '<div class="mart50 jnotice ui-state-highlight ui-corner-all">'
+                                + '<span class="ui-icon ui-icon-info message"></span>Reservations not found' 
+                                + '</div>';
+                            $('#add-reservation').after(empty);
+                        }
+                        
+                    } else {
+                        var errors = '<div class="errors">'
+                            + '<ul><li>Reservation delete unsuccessfully</li></ul></div>';
+                        $('#mes').html(errors);
+                    }                   				
+                });
+            });
+
+            $('.no').click( function () {
+                $('.mes_row').remove();
+            });
+        });   	
+    	
+    });  
+
+</script>   
+
+<div id="mes"></div>
+
+<div class="w150">
+    <span>Reservation</span><span> | </span>
+    <span><a href= "<?php echo $this->url(
+            array(
+                'controller' => 'room',
+                'action' => 'index'
+            ), 'default', true
+        );
+        ?>">Rooms</a></span>
+</div>
+
+<?php if ($this->isAllowed('reservations', 'add')) { ?>
+    <span id="add-reservations" class="floatright marb25">
+        <a href="<?php echo $this->url(
+                            array(							
+                                'controller' => 'reservations',
+                                'action' => 'add'
+                            ),
+                            'default',
+                            true
+        ); ?>">Add Resrvation</a>
+    </span>
+<?php } ?>
+
+<div class="h25"></div>
+
+<?php if ($this->reservations) { ?>
+
+    <table class="data-table">
+        <thead>
+            <tr>		
+                <th class="alignleft">Patient Name</th>
+                <th class="alignleft percent25">Room</th>               
+                <th class="w25"></th>
+                <th class="w25"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($this->reservations as $reservation) { ?>
+
+                <tr id="<?php echo $reservation['id']; ?>">
+                    <td class="alignleft"><?php echo $reservation['first_name'] . " " . $reservation['last_name']; ?></td>
+                    <td class="alignright"><?php echo $reservation['roomname'] ?></td>                   
+                    <td class="alignleft">
+                        <a class="edit" title="edit reservation" href="<?php echo $this->url(
+                                    array(
+                                        'controller' => 'reservations',
+                                        'action' => 'edit',
+                                        'id' => $reservation['id']
+                                    ), 'default', true
+                                ); ?>"></a>
+                    </td>
+                    <td class="alignleft">
+                        <a class="delete" title="delete reservation" href="JavaScript:void(0);"></a>
+                    </td>
+                </tr>
+
+            <?php } ?>
+        </tbody>
+    </table>
+
+<?php } else { ?>
+    <div class="mart50 jnotice ui-state-highlight ui-corner-all">
+        <span class="ui-icon ui-icon-info message"></span>Reservations not found
+    </div>
+<?php } ?>

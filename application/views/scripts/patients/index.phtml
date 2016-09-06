@@ -1,0 +1,183 @@
+<script type="text/javascript">
+    var baes_url = "<?php echo $this->baseUrl(); ?>";
+
+    $(document).ready(function(){        
+           
+        $('#patientCheckingList').hide();
+               
+        $('#patientCheckingLink').click(function (){
+            $('#patientCheckingList').show();
+            $('#patientUncheckingList').hide();
+            $('#patientCheckingLink').addClass("ui-state-active");
+            $('#patientUncheckingLink').removeClass("ui-state-active");           
+        });
+        
+        $('#patientUncheckingLink').click(function (){
+            $('#patientUncheckingList').show();
+            $('#patientCheckingList').hide();
+            $('#patientUncheckingLink').addClass("ui-state-active");
+            $('#patientCheckingLink').removeClass("ui-state-active");
+        });
+                              
+        $('.delete').click(function () {
+            $('.mes_row').remove();
+            $('#mes').empty();
+
+            var thisrow = $(this).parents('tr');
+            var id = thisrow.attr('id');
+
+            var mes_row = '<tr class="mes_row"><td colspan="7">'
+                + 'Are you sure you want to delete this Patient? &nbsp;'
+                + '<input class="yes" value="Yes" type="button" /> &nbsp'
+                + '<input class="no" value="No" type="button" />'
+                + '</td></tr>';
+
+            $(this).parents('tr').after(mes_row);
+
+            $('.yes').click(function () {             
+
+                $.post(baes_url+'/patients/delete/', {id:id}, function(data) {
+                    $('.mes_row').remove();	
+                    if (data) {
+                        thisrow.hide(2500);
+                        var success = '<ul class="success"><li>Patient deleted successfully</li></ul>';
+                        $('#mes').html(success);
+
+                        if ($('.data-table tbody tr').filter(':visible').length == 1) {
+                            $('.data-table').hide(2500);
+                            var empty = '<div class="mart50 jnotice ui-state-highlight ui-corner-all">'
+                                + '<span class="ui-icon ui-icon-info message"></span>Reservations not found' 
+                                + '</div>';
+                            $('#add-reservation').after(empty);
+                        }
+                        
+                    } else {
+                        var errors = '<div class="errors">'
+                            + '<ul><li>Reservation delete unsuccessfully</li></ul></div>';
+                        $('#mes').html(errors);
+                    }                   				
+                });
+            });
+
+            $('.no').click( function () {
+                $('.mes_row').remove();
+            });
+        });   	
+        
+    });   
+</script>
+
+<div class="link-set">
+    <button id="patientUncheckingLink" class="fg-button ui-state-default  ui-corner-left ui-state-active">Unchecked patient List</button>
+    <button id="patientCheckingLink" class="fg-button ui-state-default  ui-corner-right ">Checked patient List</button>
+</div>
+
+<div id="mes" class="floatleft wid90"></div>
+
+<div id="patientUncheckingList">
+
+    <?php if ($this->patientUncheckingList) { ?>
+        <br/>
+        <div class=" mart50">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="alignleft">Name</th>
+                        <th class="w35"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $trows = '';
+
+                    foreach ($this->patientUncheckingList as $patientId => $patient) {
+                        $trows .= '<tr id="' . $patient['patientID'] . '">';
+
+                        $trows .= '<td><a class="table-link" href="' . $this->url(
+                                        array(
+                                    'controller' => 'patients',
+                                    'action' => 'view',
+                                    'id' => $patient['patientID']
+                                        ), 'default', true
+                                ) . '">' . $patient['title'] . ' ' . $patient['initials'] . ' ' . $patient['first_name'] . ' ' . $patient['last_name'] . '</a></td>';
+
+
+
+                        $trows .= '<td class="aligncenter">'
+                                . '<a class="user-info" title="View Patient Information" href="'
+                                . $this->url(
+                                        array(
+                                    'controller' => 'patients',
+                                    'action' => 'view',
+                                    'id' => $patient['patientID']
+                                        ), 'default', true
+                                ) . '"></a></td>';
+                        
+                        $trows .= '</tr>';
+                    }
+
+                    echo $trows;
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+    <?php } else { ?>
+        <div class="mart50 jnotice ui-state-highlight ui-corner-all">
+            <span class="ui-icon ui-icon-info message"></span>Unchecked Patients not found 
+        </div>
+    <?php } ?>
+        
+</div>
+<div id="patientCheckingList">
+
+    <?php if ($this->patientCheckingList) { ?>
+        </br>
+        <div class=" mart50">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="alignleft">Name</th>
+                        <th class="w35"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $trows = '';
+
+                    foreach ($this->patientCheckingList as $patientId => $patient) {
+                        $trows .= '<tr id="' . $patient['patientID'] . '">';
+
+                        $trows .= '<td><a class="table-link" href="' . $this->url(
+                                        array(
+                                    'controller' => 'patients',
+                                    'action' => 'view',
+                                    'id' => $patient['patientID']
+                                        ), 'default', true
+                                ) . '">' . $patient['title'] . ' ' . $patient['initials'] . ' ' . $patient['first_name'] . ' ' . $patient['last_name'] . '</a></td>';
+
+                        $trows .= '<td class="aligncenter">'
+                                . '<a class="user-info" title="View Patient Information" href="'
+                                . $this->url(
+                                        array(
+                                    'controller' => 'patients',
+                                    'action' => 'view',
+                                    'id' => $patient['patientID']
+                                        ), 'default', true
+                                ) . '"></a></td>';                    
+
+                        $trows .= '</tr>';
+                    }
+
+                    echo $trows;
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+    <?php } else { ?>
+        <div class="mart50 jnotice ui-state-highlight ui-corner-all">
+            <span class="ui-icon ui-icon-info message"></span>CheckedPatients not found 
+        </div>
+    <?php } ?>
+</div>
